@@ -1,0 +1,38 @@
+{
+  "name": "Euler Finance Exploit",
+  "date": "2023-03-13",
+  "loss_usd": 197000000,
+  "attack_type": "donation_attack",
+  "description": "Euler Finance suffered a $197M exploit due to a missing health check in the donateToReserves function, allowing the attacker to create a large bad debt position and liquidate it at a profit. The attacker used a flash loan from Aave to fund the attack.",
+  "block_range": {
+    "start": 16817896,
+    "end": 16818196,
+    "exploit_block": 16817996
+  },
+  "key_transactions": [
+    {
+      "hash": "0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d",
+      "description": "Main exploit transaction — flash loan + donate + liquidate",
+      "gas_used": 1949994,
+      "tx_index": 0
+    }
+  ],
+  "key_addresses": {
+    "0x5f259d0b76665c337c6104145894f4d1d2758b8c": "Attacker EOA",
+    "0xebc29199c817dc47ba12e3f86102564d640cbf99": "Exploit contract (deployed by attacker)",
+    "0x27182842e098f60e3d576794a5bffb0777e025d3": "Euler Finance: eDAI market",
+    "0xeb91861f8a4e1c12333f42dce8fb0ecdc28da716": "Euler Finance: eUSDC market",
+    "0x1b900c0a7d24cfe2a7a2bd42e3454b22c94d7012": "Euler Finance: eWBTC market",
+    "0xc4138f7b2b9bb07a40fe2dbaa6ccaf5e0e9b0f7f": "Euler Finance: eWETH market",
+    "0x7a250d5630b4cf539739df2c5dacb4c659f2488d": "Uniswap V2 Router",
+    "0xdac17f958d2ee523a2206206994597c13d831ec7": "USDT (Tether)",
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "USDC (Circle)",
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "WETH",
+    "0x48c04ed5691981c42154c6167398f95e8f38a7ff": "Binance hot wallet (USDT flows)"
+  },
+  "references": [
+    "https://twitter.com/euler_mayer/status/1635268059423490049",
+    "https://www.coindesk.com/tech/2023/03/13/euler-finance-suffers-nearly-200m-flash-loan-attack/",
+    "https://github.com/SunWeb3Sec/DeFiHackLabs/blob/main/src/test/Euler_exp.sol"
+  ]
+}

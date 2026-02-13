@@ -1,0 +1,39 @@
+# Secrets
+.env
+**/.env
+scripts/.env
+
+# Claude local settings
+.claude/
+CLAUDE.md
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Rust build artifacts
+tools/offline-replay/target/
+
+# reth-exex-indexer lives in its own repo (yodablocks/reth-usdc-indexer)
+tools/reth-exex-indexer/
+
+# Captured data (large, not for git)
+examples/*/capture.db
+examples/*/capture.db-shm
+examples/*/capture.db-wal
+examples/*/*.parquet
+examples/*/traces/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Distribution archives
+*.zip
+
+# macOS
+.DS_Store

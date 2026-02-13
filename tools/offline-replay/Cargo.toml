@@ -1,0 +1,33 @@
+[package]
+name = "offline-replay"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+description = "Load a DeFi Replay Kit dataset (Parquet) into a queryable SQLite database"
+
+[[bin]]
+name = "offline-replay"
+path = "src/main.rs"
+
+[dependencies]
+# Parquet / Arrow reading
+parquet = "53"
+arrow   = "53"
+
+# SQLite
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# CLI args
+clap = { version = "4", features = ["derive"] }
+
+# Progress bar
+indicatif = "0.17"
+
+# Error handling
+eyre = "0.6"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
