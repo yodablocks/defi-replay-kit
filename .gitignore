@@ -32,8 +32,9 @@ examples/*/traces/
 *.db-shm
 *.db-wal
 
-# Distribution archives
+# Distribution archives and staged release assets
 *.zip
+dist/
 
 # macOS
 .DS_Store
