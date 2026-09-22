@@ -11,28 +11,28 @@ Downloadable data packs covering real DeFi exploits and MEV attacks — blocks, 
 - Paying for RPC access to historical data ($50-200/month)
 - Days of sync time and complex setup
 
-**Solution:** Download a small dataset (17 MB) containing 300 blocks around a real attack. Load it locally in seconds. Query with SQL. Zero ongoing costs.
+**Solution:** Download one dataset (17 to 102 MB) covering the blocks around a real attack. Load it locally in seconds. Query with SQL. Zero ongoing costs.
 
 ## Quick Start
 
 ```bash
-REL=https://github.com/yodablocks/defi-replay-kit/releases/download/v0.1.0
+REL=https://github.com/yodablocks/defi-replay-kit/releases/download/v0.2.0
 
-# 1. Download a dataset (17 MB) and unpack it
+# 1. Pick a dataset and unpack it
+#      euler-finance.zip    17 MB, one exploit, 301 blocks
+#      curve-vyper.zip     102 MB, three exploits, 867 blocks
 curl -LO $REL/euler-finance.zip
 unzip euler-finance.zip -d euler-finance
 cd euler-finance/
 
-# 2a. Apple Silicon Mac: grab the prebuilt indexer
-curl -Lo offline-replay $REL/offline-replay-macos-arm64
+# 2. Download the indexer for your platform
+#      offline-replay-linux-x86_64   statically linked, any distro
+#      offline-replay-macos-arm64    Apple Silicon
+#      offline-replay-macos-x86_64   Intel Mac
+curl -Lo offline-replay $REL/offline-replay-linux-x86_64
 chmod +x offline-replay
-# The binary is unsigned. If macOS refuses to run it:
+# The binaries are unsigned. If macOS refuses to run one:
 #     xattr -d com.apple.quarantine offline-replay
-
-# 2b. Everyone else: build it once (needs Rust 1.80+, takes about a minute)
-#     git clone --branch v0.1.0 --depth 1 https://github.com/yodablocks/defi-replay-kit
-#     cargo build --release --manifest-path defi-replay-kit/tools/offline-replay/Cargo.toml
-#     cp defi-replay-kit/tools/offline-replay/target/release/offline-replay .
 
 # 3. Load into SQLite (takes ~5 seconds)
 ./offline-replay --data . --out ethereum.db
@@ -52,10 +52,31 @@ sqlite3 ethereum.db
 
 - **Attack type:** Donation attack + flash loan
 - **Block:** 16,817,996
-- **Block range:** 16,817,896 – 16,818,196 (300 blocks)
+- **Block range:** 16,817,896 – 16,818,196 (301 blocks)
+- **Download:** 17 MB
 - **Contents:** blocks, transactions, event logs (Parquet) plus metadata.json and queries.sql
 
 Key transaction: `0xc310a0af...` — flash loan from Aave → donate to reserve → bad debt position → liquidate at profit.
+
+### Curve Vyper Reentrancy — three pools, $37M (July 2023)
+
+- **Attack type:** Reentrancy through a malfunctioning lock in Vyper 0.2.15, 0.2.16 and 0.3.0
+- **Block range:** 17,806,006 – 17,806,872 (867 blocks)
+- **Download:** 102 MB
+- **Contents:** blocks, transactions, event logs (Parquet) plus metadata.json and queries.sql
+
+| Block | Pool | Loss |
+|---|---|---|
+| 17,806,056 | JPEG'd pETH/ETH | ~$11M |
+| 17,806,550 | Metronome msETH/ETH | ~$3.4M |
+| 17,806,772 | Alchemix alETH/ETH | ~$22.6M |
+
+One compiler bug, three pools, 716 blocks apart. Each attack flash loaned WETH
+from the Balancer vault and re-entered the pool through `remove_liquidity` while
+its balances were mid-update. The msETH transaction was sent by c0ffeebabe.eth
+and is reported as a whitehat rescue rather than a theft. The Curve CRV/ETH pool
+was hit in the same campaign at blocks 17,807,830 and 17,808,683, outside this
+window.
 
 ## Repository Layout
 
@@ -66,7 +87,8 @@ defi-replay-kit/
 ├── scripts/
 │   └── capture.py           # RPC-based data capture script (Python, for maintainers)
 ├── examples/
-│   └── euler-finance/       # Euler Finance dataset + example queries
+│   ├── euler-finance/       # Euler Finance dataset + example queries
+│   └── curve-vyper/         # Curve Vyper reentrancy dataset + example queries
 └── README.md
 ```
 
@@ -100,7 +122,7 @@ Indexes on `block_number`, `from_addr`, `to_addr`, `address`, `topic0`.
 
 ## Example Queries
 
-See [`examples/euler-finance/queries.sql`](examples/euler-finance/queries.sql) for 8 ready-to-run forensic queries, including:
+See [`examples/euler-finance/queries.sql`](examples/euler-finance/queries.sql) and [`examples/curve-vyper/queries.sql`](examples/curve-vyper/queries.sql) for ready-to-run forensic queries, including:
 
 - All events emitted by the exploit transaction
 - ERC-20 Transfer events in the exploit block
