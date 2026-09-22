@@ -11,20 +11,32 @@ Downloadable data packs covering real DeFi exploits and MEV attacks — blocks, 
 - Paying for RPC access to historical data ($50-200/month)
 - Days of sync time and complex setup
 
-**Solution:** Download a small dataset (~100 MB) containing 300 blocks around a real attack. Load it locally in seconds. Query with SQL. Zero ongoing costs.
+**Solution:** Download a small dataset (17 MB) containing 300 blocks around a real attack. Load it locally in seconds. Query with SQL. Zero ongoing costs.
 
 ## Quick Start
 
 ```bash
-# 1. Download a dataset
-curl -LO https://github.com/yodablocks/defi-replay-kit/releases/download/v0.1.0/euler-finance.zip
-unzip euler-finance.zip
+REL=https://github.com/yodablocks/defi-replay-kit/releases/download/v0.1.0
+
+# 1. Download a dataset (17 MB) and unpack it
+curl -LO $REL/euler-finance.zip
+unzip euler-finance.zip -d euler-finance
 cd euler-finance/
 
-# 2. Load into SQLite (takes ~5 seconds)
+# 2a. Apple Silicon Mac: grab the prebuilt indexer
+curl -Lo offline-replay $REL/offline-replay-macos-arm64
+chmod +x offline-replay
+xattr -d com.apple.quarantine offline-replay   # unsigned binary
+
+# 2b. Everyone else: build it once (needs Rust 1.80+, takes about a minute)
+#     git clone https://github.com/yodablocks/defi-replay-kit
+#     cargo build --release --manifest-path defi-replay-kit/tools/offline-replay/Cargo.toml
+#     cp defi-replay-kit/tools/offline-replay/target/release/offline-replay .
+
+# 3. Load into SQLite (takes ~5 seconds)
 ./offline-replay --data . --out ethereum.db
 
-# 3. Query
+# 4. Query
 sqlite3 ethereum.db "SELECT hash, gas_used FROM transactions WHERE block_number = 16817996"
 ```
 
@@ -40,7 +52,7 @@ sqlite3 ethereum.db
 - **Attack type:** Donation attack + flash loan
 - **Block:** 16,817,996
 - **Block range:** 16,817,896 – 16,818,196 (300 blocks)
-- **Contents:** blocks, transactions, event logs
+- **Contents:** blocks, transactions, event logs (Parquet) plus metadata.json and queries.sql
 
 Key transaction: `0xc310a0af...` — flash loan from Aave → donate to reserve → bad debt position → liquidate at profit.
 
@@ -49,7 +61,7 @@ Key transaction: `0xc310a0af...` — flash loan from Aave → donate to reserve 
 ```
 defi-replay-kit/
 ├── tools/
-│   └── offline-replay/      # Parquet → SQLite indexer (Rust, ships in each zip)
+│   └── offline-replay/      # Parquet → SQLite indexer (Rust, prebuilt in each release)
 ├── scripts/
 │   └── capture.py           # RPC-based data capture script (Python, for maintainers)
 ├── examples/
