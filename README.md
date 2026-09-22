@@ -26,10 +26,11 @@ cd euler-finance/
 # 2a. Apple Silicon Mac: grab the prebuilt indexer
 curl -Lo offline-replay $REL/offline-replay-macos-arm64
 chmod +x offline-replay
-xattr -d com.apple.quarantine offline-replay   # unsigned binary
+# The binary is unsigned. If macOS refuses to run it:
+#     xattr -d com.apple.quarantine offline-replay
 
 # 2b. Everyone else: build it once (needs Rust 1.80+, takes about a minute)
-#     git clone https://github.com/yodablocks/defi-replay-kit
+#     git clone --branch v0.1.0 --depth 1 https://github.com/yodablocks/defi-replay-kit
 #     cargo build --release --manifest-path defi-replay-kit/tools/offline-replay/Cargo.toml
 #     cp defi-replay-kit/tools/offline-replay/target/release/offline-replay .
 
