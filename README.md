@@ -118,7 +118,7 @@ See [`examples/euler-finance/queries.sql`](examples/euler-finance/queries.sql) f
 
 | Feature | DeFiHackLabs | Phalcon Fork | DeFi Replay Kit |
 |---------|:------------:|:------------:|:---------------:|
-| Ongoing cost | Free (needs RPC) | $500/team/mo | One-time download |
+| Ongoing cost | Free (needs RPC) | Paid plans | One-time download |
 | Works offline | No | No | **Yes** |
 | Pre-packaged data | No | No | **Yes** |
 | Setup time | 30 min | 10 min | ~2 min |
