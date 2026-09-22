@@ -49,8 +49,7 @@ Key transaction: `0xc310a0af...` — flash loan from Aave → donate to reserve 
 ```
 defi-replay-kit/
 ├── tools/
-│   ├── offline-replay/      # Parquet → SQLite indexer (Rust, ships in each zip)
-│   └── reth-exex-indexer/   # Data capture tool (Rust, Reth ExEx — for maintainers)
+│   └── offline-replay/      # Parquet → SQLite indexer (Rust, ships in each zip)
 ├── scripts/
 │   └── capture.py           # RPC-based data capture script (Python, for maintainers)
 ├── examples/
